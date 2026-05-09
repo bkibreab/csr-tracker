@@ -1144,6 +1144,13 @@ if (!state.optins) state.optins = {};
 if (!state.credits) state.credits = {};
 if (!state.lastImport) state.lastImport = null;
 
+// Force survey to re-run on this deploy (v2 survey)
+if (state.surveyVersion !== 2) {
+  state.setupDone = false;
+  state.surveyVersion = 2;
+  saveState(state);
+}
+
 // Seed default optins
 defaultOptins.forEach(o => {
   if (!state.optins[o.id]) state.optins[o.id] = o.status;
@@ -1794,6 +1801,8 @@ function openSurvey() {
 }
 
 function closeSurvey() {
+  state.setupDone = true;
+  saveState(state);
   document.getElementById('surveyOverlay').classList.add('hidden');
   renderAll();
 }
@@ -1929,17 +1938,10 @@ function renderAll() {
 
 renderAll();
 
-// Launch survey on first visit (no setupDone flag)
+// Launch survey if setup not completed
 if (!state.setupDone) {
-  // Mark setup as done so it doesn't auto-launch again after first completion
-  const originalClose = closeSurvey;
-  window.closeSurvey = function() {
-    state.setupDone = true;
-    saveState(state);
-    originalClose();
-  };
   openSurvey();
 }
-</script>
+
 </body>
 </html>
