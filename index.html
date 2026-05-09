@@ -985,7 +985,7 @@ const credits = [
   { id: 'doordash', name: 'DoorDash Monthly',    period: '$25 each month · use or lose',  allowance: 25,   expiryLabel: 'Monthly',     expiryDate: null,         autoTrack: 'doordash', monthly: true },
   { id: 'edit',     name: 'The Edit Hotel',      period: 'H2 · Apr – Sep 2026',           allowance: 250,  expiryLabel: '30 Sep 2026', expiryDate: '2026-09-30', autoTrack: null },
   { id: 'stubhub',  name: 'StubHub / Viagogo',   period: 'H2 · Apr – Sep 2026',           allowance: 150,  expiryLabel: '30 Sep 2026', expiryDate: '2026-09-30', autoTrack: 'stubhub' },
-  { id: 'dining',   name: 'Exclusive Tables Dining', period: 'H2 · Apr – Sep 2026',       allowance: 150,  expiryLabel: '30 Sep 2026', expiryDate: '2026-09-30', autoTrack: null },
+  { id: 'dining',   name: 'Exclusive Tables Dining', period: 'H2 · Apr – Sep 2026 · manual entry',       allowance: 150,  expiryLabel: '30 Sep 2026', expiryDate: '2026-09-30', autoTrack: null },
   { id: 'lyft',     name: 'Lyft Monthly Credit', period: '$10 each month · use or lose',  allowance: 10,   expiryLabel: 'Monthly',     expiryDate: null,         autoTrack: 'lyft', monthly: true },
   { id: 'apple',    name: 'Apple TV+ & Music',   period: 'Auto-applied · membership',     allowance: 288,  expiryLabel: '22 Jun 2027', expiryDate: '2027-06-22', autoTrack: 'apple' },
   { id: 'dashpass', name: 'DashPass',            period: 'Passed · opted out',            allowance: 0,    expiryLabel: '—',           expiryDate: null,         autoTrack: null, passed: true },
@@ -1418,64 +1418,115 @@ document.getElementById('modal').addEventListener('click', e => {
 });
 
 // ─── CSV IMPORT ───────────────────────────────────────────────────────────────
+// Chase CSV format: Transaction Date, Post Date, Description, Category, Type, Amount, Memo
+// Amounts are negative for purchases (e.g. -42.00), positive for payments/returns
 const csvPatterns = {
-  doordash: /doordash/i,
+  doordash: /doordash|DD \*DOORDASH/i,
   lyft:     /lyft/i,
   stubhub:  /stubhub|viagogo/i,
-  apple:    /apple\.com\/bill|apple services/i,
-  travel:   /travel credit|airline|hotel|united|delta|american air|southwest|marriott|hilton|hyatt|ihg|airbnb|expedia/i,
-  dining:   /republique|gjelina|majordomo|chi spacca|anajak|pasjoli|meteora|melisse|delilah|vespertine|somni|gwen|ronan|dunsmoor/i,
+  apple:    /apple\.com|apple\.com\/bill|apple\.com\/us/i,
+  travel:   /united|delta|american air|southwest|alaska air|jetblue|spirit air|frontier|airbnb|expedia|hotels\.com|marriott|hilton|hyatt|ihg|westin|sheraton|ritz|four seasons|priceline|booking\.com|kayak|travelocity|hertz|avis|enterprise|national car|budget rent/i,
+
 };
+
+// Card year boundaries for period detection
+const H1_START = new Date('2025-10-01');
+const H1_END   = new Date('2026-03-31');
+const H2_START = new Date('2026-04-01');
+const H2_END   = new Date('2026-09-30');
+
+function parseChaseCSV(text) {
+  const lines = text.split('\n');
+  const results = { doordash: {}, lyft: {}, stubhub: 0, apple: 0, travel: 0 };
+  let matched = 0;
+  let skipped = 0;
+
+  lines.forEach((line, idx) => {
+    if (idx === 0) return; // skip header
+    // Parse CSV properly handling quoted fields
+    const cols = line.match(/(".*?"|[^,]+)(?=,|$)/g) || line.split(',');
+    if (cols.length < 6) return;
+
+    const dateStr  = (cols[0] || '').trim().replace(/"/g, '');
+    const desc     = (cols[2] || '').trim().replace(/"/g, '');
+    const type     = (cols[4] || '').trim().replace(/"/g, '');
+    const amtStr   = (cols[5] || '').trim().replace(/"/g, '');
+    const amt      = parseFloat(amtStr);
+
+    // Skip payments, returns, zero amounts
+    if (isNaN(amt) || amt >= 0) return;
+    if (type === 'Payment' || type === 'Return') return;
+
+    const absAmt = Math.abs(amt);
+    const txDate = new Date(dateStr);
+
+    // Match against patterns
+    let foundKey = null;
+    for (const [key, pat] of Object.entries(csvPatterns)) {
+      if (pat.test(desc)) { foundKey = key; break; }
+    }
+
+    if (!foundKey) return;
+    matched++;
+
+    if (foundKey === 'doordash') {
+      // Track by month
+      const monthKey = `${txDate.getFullYear()}_${txDate.getMonth()}`;
+      results.doordash[monthKey] = (results.doordash[monthKey] || 0) + absAmt;
+    } else if (foundKey === 'lyft') {
+      const monthKey = `${txDate.getFullYear()}_${txDate.getMonth()}`;
+      results.lyft[monthKey] = (results.lyft[monthKey] || 0) + absAmt;
+    } else if (foundKey === 'stubhub') {
+      // Only H2 (Apr-Sep 2026) — H1 already expired
+      if (txDate >= H2_START && txDate <= H2_END) {
+        results.stubhub += absAmt;
+      }
+    } else if (foundKey === 'apple') {
+      results.apple += absAmt;
+    } else if (foundKey === 'travel') {
+      results.travel += absAmt;
+    } else if (foundKey === 'travel') {
+        results.travel += absAmt;
+      }
+  });
+
+  return { results, matched };
+}
 
 function handleCSV(event) {
   const file = event.target.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
-    const lines = e.target.result.split('\n');
-    let matched = 0;
-    const found = {};
+    const { results, matched } = parseChaseCSV(e.target.result);
 
-    lines.forEach(line => {
-      const cols = line.split(',');
-      if (cols.length < 3) return;
-      const desc = cols.find(c => c.length > 3 && isNaN(c)) || '';
-      const amtStr = cols.find(c => !isNaN(parseFloat(c)) && parseFloat(c) > 0);
-      const amt = parseFloat(amtStr) || 0;
-
-      for (const [key, pat] of Object.entries(csvPatterns)) {
-        if (pat.test(desc)) {
-          found[key] = (found[key] || 0) + amt;
-          matched++;
-          break;
-        }
-      }
+    // Apply DoorDash by month (cap at $25/month)
+    Object.entries(results.doordash).forEach(([monthKey, amt]) => {
+      const key = `doordash_${monthKey}`;
+      state.credits[key] = Math.min(25, amt);
     });
 
-    // Apply to state (accumulate, don't replace)
-    if (found.doordash) {
-      const key = `doordash_${today.getFullYear()}_${today.getMonth()}`;
-      state.credits[key] = Math.min(25, (parseFloat(state.credits[key] || 0) + found.doordash));
-    }
-    if (found.lyft) {
-      const key = `lyft_${today.getFullYear()}_${today.getMonth()}`;
-      state.credits[key] = Math.min(10, (parseFloat(state.credits[key] || 0) + found.lyft));
-    }
-    if (found.stubhub) state.credits['stubhub'] = Math.min(150, (parseFloat(state.credits['stubhub'] || 0) + found.stubhub));
-    if (found.apple)   state.credits['apple']   = Math.min(288, (parseFloat(state.credits['apple'] || 0) + found.apple));
-    if (found.travel)  state.credits['travel']  = Math.min(300, (parseFloat(state.credits['travel'] || 0) + found.travel));
-    if (found.dining)  state.credits['dining']  = Math.min(150, (parseFloat(state.credits['dining'] || 0) + found.dining));
+    // Apply Lyft by month (cap at $10/month)
+    Object.entries(results.lyft).forEach(([monthKey, amt]) => {
+      const key = `lyft_${monthKey}`;
+      state.credits[key] = Math.min(10, amt);
+    });
+
+    // Apply others (cap at allowance)
+    if (results.stubhub > 0) state.credits['stubhub'] = Math.min(150, results.stubhub);
+    if (results.apple > 0)   state.credits['apple']   = Math.min(288, results.apple);
+    if (results.travel > 0)  state.credits['travel']  = Math.min(300, results.travel);
 
     state.lastImport = new Date().toISOString();
     saveState(state);
 
     document.getElementById('csvStatus').textContent =
-      `${matched} transactions matched · ${file.name}`;
+      `${matched} transactions matched · ${file.name.split('_')[0]}`;
     document.getElementById('lastImport').textContent =
       new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
 
     renderAll();
-    showToast(`${matched} transactions processed`);
+    showToast(`${matched} transactions matched`);
     event.target.value = '';
   };
   reader.readAsText(file);
