@@ -799,6 +799,118 @@ body {
   letter-spacing: 1.1em;
   opacity: 0.5;
 }
+
+/* ── SURVEY ── */
+.survey-overlay {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 95% 0%, rgba(197,202,213,0.15) 0%, transparent 38%),
+    radial-gradient(ellipse at 0% 100%, rgba(26,47,90,0.4) 0%, transparent 50%),
+    linear-gradient(145deg, #050B16 0%, #0A1428 40%, #0F1D38 75%, #1A2F5A 100%);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.survey-overlay.hidden { display: none; }
+.survey-card {
+  max-width: 560px;
+  width: 100%;
+  animation: slideUp 0.4s ease;
+}
+.survey-progress { display: flex; gap: 4px; margin-bottom: 36px; }
+.survey-pip { height: 2px; flex: 1; background: var(--rule-strong); border-radius: 1px; transition: background 0.3s; }
+.survey-pip.done { background: var(--gold); }
+.survey-pip.active { background: var(--platinum-2); }
+.survey-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 12px;
+}
+.survey-q {
+  font-family: 'Fraunces', serif; font-weight: 300;
+  font-size: clamp(24px, 4vw, 36px); line-height: 1.2;
+  letter-spacing: -0.02em; color: var(--platinum); margin-bottom: 8px;
+}
+.survey-sub {
+  font-family: 'Inter', sans-serif; font-size: 13px;
+  color: var(--platinum-3); font-style: italic;
+  margin-bottom: 32px; line-height: 1.5;
+}
+.survey-choices { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.survey-btn {
+  background: var(--glass); border: 1px solid var(--rule-strong);
+  color: var(--platinum-2); font-family: 'Inter', sans-serif;
+  font-size: 14px; padding: 16px 20px; text-align: left;
+  cursor: pointer; border-radius: 4px; transition: all 0.2s;
+  display: flex; align-items: center; gap: 14px;
+}
+.survey-btn:hover { background: var(--glass-hover); border-color: rgba(212,184,138,0.3); color: var(--platinum); }
+.survey-btn .btn-icon {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0; background: var(--rule-strong);
+}
+.survey-btn.yes-btn .btn-icon { background: rgba(79,178,134,0.15); color: var(--emerald); }
+.survey-btn.no-btn .btn-icon { background: rgba(232,116,107,0.15); color: var(--crimson); }
+.survey-btn.pass-btn .btn-icon { background: rgba(107,114,134,0.15); color: var(--silver-mute); }
+
+.survey-instruction-box {
+  background: rgba(212,184,138,0.08); border: 1px solid rgba(212,184,138,0.2);
+  border-radius: 4px; padding: 18px 20px; margin-bottom: 16px; display: none;
+}
+.survey-instruction-box.show { display: block; }
+.survey-instruction-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+}
+.survey-instruction-text { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--platinum-2); line-height: 1.6; }
+
+.survey-confirm-btns { display: none; gap: 10px; margin-bottom: 20px; }
+.survey-confirm-btns.show { display: flex; }
+.survey-confirm-yes {
+  flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  background: rgba(79,178,134,0.15); border: 1px solid rgba(79,178,134,0.35);
+  color: var(--emerald); padding: 12px; cursor: pointer; border-radius: 2px; transition: all 0.2s;
+}
+.survey-confirm-yes:hover { background: rgba(79,178,134,0.25); }
+.survey-confirm-no {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase; background: transparent;
+  border: 1px solid var(--rule-strong); color: var(--silver-mute);
+  padding: 12px 18px; cursor: pointer; border-radius: 2px; transition: all 0.2s;
+}
+.survey-confirm-no:hover { color: var(--platinum-3); border-color: var(--platinum-3); }
+
+.survey-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 20px; border-top: 1px solid var(--rule);
+}
+.survey-back {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  background: none; border: none; color: var(--silver-mute);
+  cursor: pointer; transition: color 0.2s; padding: 0;
+}
+.survey-back:hover { color: var(--platinum-2); }
+.survey-back:disabled { opacity: 0.2; cursor: default; }
+.survey-step-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--silver-mute);
+}
+.settings-btn {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--glass); border: 1px solid var(--rule-strong);
+  color: var(--platinum-3); font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 10px 16px; cursor: pointer; border-radius: 2px;
+  z-index: 10; transition: all 0.2s; backdrop-filter: blur(8px);
+}
+.settings-btn:hover { color: var(--gold); border-color: rgba(212,184,138,0.3); }
+
 </style>
 </head>
 <body>
@@ -806,6 +918,32 @@ body {
 <div class="bg-layer"></div>
 <div class="tri-bg"></div>
 <div class="grain"></div>
+
+<!-- SETTINGS BUTTON -->
+<button class="settings-btn" onclick="openSurvey()">⚙ Update Settings</button>
+
+<!-- SURVEY OVERLAY -->
+<div class="survey-overlay" id="surveyOverlay">
+  <div class="survey-card">
+    <div class="survey-progress" id="surveyProgress"></div>
+    <div class="survey-eyebrow" id="surveyEyebrow">Setup</div>
+    <div class="survey-q" id="surveyQ"></div>
+    <div class="survey-sub" id="surveySub"></div>
+    <div class="survey-choices" id="surveyChoices"></div>
+    <div class="survey-instruction-box" id="surveyInstructionBox">
+      <div class="survey-instruction-label">How to activate</div>
+      <div class="survey-instruction-text" id="surveyInstructionText"></div>
+    </div>
+    <div class="survey-confirm-btns" id="surveyConfirmBtns">
+      <button class="survey-confirm-yes" onclick="surveyConfirmDone()">✓ Done — I activated it</button>
+      <button class="survey-confirm-no" onclick="surveyConfirmSkip()">Not yet — remind me later</button>
+    </div>
+    <div class="survey-nav">
+      <button class="survey-back" id="surveyBack" onclick="surveyBack()">← Back</button>
+      <span class="survey-step-label" id="surveyStepLabel"></span>
+    </div>
+  </div>
+</div>
 
 <!-- MANUAL ENTRY MODAL -->
 <div class="modal-overlay" id="modal">
@@ -987,7 +1125,7 @@ const credits = [
   { id: 'stubhub',  name: 'StubHub / Viagogo',   period: 'H2 · Apr – Sep 2026',           allowance: 150,  expiryLabel: '30 Sep 2026', expiryDate: '2026-09-30', autoTrack: 'stubhub' },
   { id: 'dining',   name: 'Exclusive Tables Dining', period: 'H2 · Apr – Sep 2026 · manual entry',       allowance: 150,  expiryLabel: '30 Sep 2026', expiryDate: '2026-09-30', autoTrack: null },
   { id: 'lyft',     name: 'Lyft Monthly Credit', period: '$10 each month · use or lose',  allowance: 10,   expiryLabel: 'Monthly',     expiryDate: null,         autoTrack: 'lyft', monthly: true },
-  { id: 'apple',    name: 'Apple TV+ & Music',   period: 'Auto-applied · membership',     allowance: 288,  expiryLabel: '22 Jun 2027', expiryDate: '2027-06-22', autoTrack: 'apple' },
+  { id: 'apple',    name: 'Apple TV+ & Music',   period: 'Auto-applied · activate first',     allowance: 288,  expiryLabel: '22 Jun 2027', expiryDate: '2027-06-22', autoTrack: 'apple', requiresOptin: ['appletv','applemus'] },
   { id: 'dashpass', name: 'DashPass',            period: 'Passed · opted out',            allowance: 0,    expiryLabel: '—',           expiryDate: null,         autoTrack: null, passed: true },
   { id: 'global',   name: 'Global Entry / TSA',  period: 'Quadrennial · next 2028',       allowance: 120,  expiryLabel: '2028',        expiryDate: '2028-01-01', autoTrack: null, future: true },
 ];
@@ -1042,8 +1180,20 @@ const yearPct = Math.min(100, Math.max(0, (cardYearDay / cardYearLen) * 100));
 
 // Monthly credits: how much used this month
 function monthlyUsed(id) {
+  // Current month only — for display in the credits table
   const key = `${id}_${today.getFullYear()}_${today.getMonth()}`;
   return parseFloat(state.credits[key] || 0);
+}
+
+function monthlyTotal(id) {
+  // Sum ALL months — for net position calculation
+  let total = 0;
+  Object.keys(state.credits).forEach(key => {
+    if (key.startsWith(`${id}_`)) {
+      total += parseFloat(state.credits[key] || 0);
+    }
+  });
+  return total;
 }
 
 // ─── MASTHEAD DATES ───────────────────────────────────────────────────────────
@@ -1166,7 +1316,13 @@ function setOptin(id, status) {
 // ─── CREDIT CALCULATIONS ──────────────────────────────────────────────────────
 function getCreditUsed(c) {
   if (c.passed || c.future) return null;
-  if (c.monthly) return monthlyUsed(c.id);
+  // If benefit requires activation and isn't activated, return 0
+  if (c.requiresOptin) {
+    const anyActive = c.requiresOptin.some(id => state.optins[id] === 'active');
+    if (!anyActive) return 0;
+  }
+  // For monthly credits always sum ALL months
+  if (c.monthly) return monthlyTotal(c.id);
   return parseFloat(state.credits[c.id] || 0);
 }
 
@@ -1175,7 +1331,10 @@ function totalCaptured() {
   credits.forEach(c => {
     if (c.passed || c.future) return;
     const used = getCreditUsed(c);
-    total += Math.min(used, c.allowance);
+    if (used === null || used <= 0) return;
+    // For monthly credits cap at card-year max (12 months)
+    const cap = c.monthly ? c.allowance * 12 : c.allowance;
+    total += Math.min(used, cap);
   });
   return total;
 }
@@ -1281,7 +1440,11 @@ function renderPosition() {
   ];
   credits.forEach(c => {
     if (c.passed || c.future) return;
-    const used = getCreditUsed(c);
+    if (c.requiresOptin) {
+      const anyActive = c.requiresOptin.some(id => state.optins[id] === 'active');
+      if (!anyActive) return;
+    }
+    const used = c.monthly ? monthlyTotal(c.id) : getCreditUsed(c);
     if (used > 0) rows.push({ label: c.name + ', captured', val: `+$${used.toFixed(2)}`, cls: 'credit' });
   });
   rows.push({ label: 'Net position, to date', val: `${net >= 0 ? '+' : ''}$${net.toFixed(2)}`, cls: net >= 0 ? 'credit' : 'debit', total: true });
@@ -1485,9 +1648,7 @@ function parseChaseCSV(text) {
       results.apple += absAmt;
     } else if (foundKey === 'travel') {
       results.travel += absAmt;
-    } else if (foundKey === 'travel') {
-        results.travel += absAmt;
-      }
+    }
   });
 
   return { results, matched };
@@ -1514,7 +1675,14 @@ function handleCSV(event) {
 
     // Apply others (cap at allowance)
     if (results.stubhub > 0) state.credits['stubhub'] = Math.min(150, results.stubhub);
-    if (results.apple > 0)   state.credits['apple']   = Math.min(288, results.apple);
+    // Only count Apple if benefit is activated — otherwise these are out-of-pocket payments
+    const appleActivated = (state.optins['appletv'] === 'active' || state.optins['applemus'] === 'active');
+    if (appleActivated && results.apple > 0) {
+      state.credits['apple'] = Math.min(288, results.apple);
+    } else {
+      // Clear any previously stored apple data if not activated
+      delete state.credits['apple'];
+    }
     if (results.travel > 0)  state.credits['travel']  = Math.min(300, results.travel);
 
     state.lastImport = new Date().toISOString();
@@ -1540,6 +1708,217 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
+// ─── SURVEY ───────────────────────────────────────────────────────────────────
+const surveySteps = [
+  {
+    id: 'welcome',
+    eyebrow: 'Welcome',
+    q: 'Let\'s set up your Benefit Tracker.',
+    sub: 'This takes about 2 minutes and only happens once. We\'ll ask about each benefit that requires activation so we can track your credits accurately.',
+    type: 'welcome',
+  },
+  {
+    id: 'appletv',
+    eyebrow: 'Apple Benefits',
+    q: 'Have you activated Apple TV+ through Chase?',
+    sub: 'This is a complimentary membership — not a statement credit. You must link your Apple ID through Chase to get it free.',
+    type: 'optin',
+    optinId: 'appletv',
+    instruction: 'Open Chase app → Card Benefits → Find Apple TV+ → tap Activate Now → link your Apple ID. Your existing Apple TV+ subscription will be automatically suspended.',
+  },
+  {
+    id: 'applemus',
+    eyebrow: 'Apple Benefits',
+    q: 'Have you activated Apple Music through Chase?',
+    sub: 'Same process as Apple TV+ — requires linking your Apple ID separately.',
+    type: 'optin',
+    optinId: 'applemus',
+    instruction: 'Open Chase app → Card Benefits → Find Apple Music → tap Activate Now → link your Apple ID.',
+  },
+  {
+    id: 'stubhub',
+    eyebrow: 'StubHub Credit · $150 remaining',
+    q: 'Have you activated your StubHub credit?',
+    sub: 'You get $150 for events (Jan–Jun) and $150 (Jul–Dec). Activation is required before any purchase counts.',
+    type: 'optin',
+    optinId: 'stubhub',
+    instruction: 'Go to chase.com → log in → Benefits & Travel → Benefits → scroll to "Maximize your credits" → click the StubHub tile → follow activation steps.',
+  },
+  {
+    id: 'ihg',
+    eyebrow: 'IHG Platinum Status',
+    q: 'Have you activated IHG One Rewards Platinum Elite status?',
+    sub: 'Free hotel elite status through Dec 2027 — gives you room upgrades, late checkout, and bonus points at IHG hotels.',
+    type: 'optin',
+    optinId: 'ihg',
+    instruction: 'Go to chase.com → Card Benefits → IHG One Rewards section → click Activate → link or create your IHG account.',
+  },
+  {
+    id: 'lyft',
+    eyebrow: 'Lyft Credit · $10/month',
+    q: 'Is your Sapphire Reserve card saved in your Lyft app?',
+    sub: 'That\'s all you need. Chase automatically applies a $10 credit each month when you pay for Lyft rides with your CSR.',
+    type: 'optin',
+    optinId: 'lyft',
+    instruction: 'Open Lyft app → Payment → Add Payment Method → add your Chase Sapphire Reserve card. The $10 monthly credit applies automatically.',
+  },
+  {
+    id: 'dashpass',
+    eyebrow: 'DashPass & DoorDash',
+    q: 'Do you want to track your $25/month DoorDash credits?',
+    sub: 'Credits apply as discounts at DoorDash checkout — $5 off a restaurant order and two $10 non-restaurant credits monthly.',
+    type: 'optin',
+    optinId: 'dashpass',
+    yesLabel: 'Yes — track my DoorDash credits',
+    noLabel: 'Pass — I don\'t use DoorDash',
+    noIsPassed: true,
+    noInstruction: false,
+  },
+  {
+    id: 'done',
+    eyebrow: 'All set',
+    q: 'You\'re ready to go.',
+    sub: 'Upload your Chase CSV using the button on the dashboard to auto-populate your credits. You can update these settings anytime using the ⚙ button.',
+    type: 'done',
+  },
+];
+
+let surveyStep = 0;
+let surveyWaitingConfirm = false;
+
+function openSurvey() {
+  surveyStep = 0;
+  surveyWaitingConfirm = false;
+  document.getElementById('surveyOverlay').classList.remove('hidden');
+  renderSurveyStep();
+}
+
+function closeSurvey() {
+  document.getElementById('surveyOverlay').classList.add('hidden');
+  renderAll();
+}
+
+function renderSurveyStep() {
+  const step = surveySteps[surveyStep];
+  const total = surveySteps.length;
+
+  // Progress pips
+  const progress = document.getElementById('surveyProgress');
+  progress.innerHTML = surveySteps.map((_, i) =>
+    `<div class="survey-pip ${i < surveyStep ? 'done' : i === surveyStep ? 'active' : ''}"></div>`
+  ).join('');
+
+  document.getElementById('surveyEyebrow').textContent = step.eyebrow;
+  document.getElementById('surveyQ').textContent = step.q;
+  document.getElementById('surveySub').textContent = step.sub;
+  document.getElementById('surveyStepLabel').textContent = `${surveyStep + 1} of ${total}`;
+  document.getElementById('surveyBack').disabled = surveyStep === 0;
+
+  // Hide instruction and confirm by default
+  document.getElementById('surveyInstructionBox').classList.remove('show');
+  document.getElementById('surveyConfirmBtns').classList.remove('show');
+  surveyWaitingConfirm = false;
+
+  const choices = document.getElementById('surveyChoices');
+  choices.innerHTML = '';
+
+  if (step.type === 'welcome') {
+    const btn = document.createElement('button');
+    btn.className = 'survey-btn yes-btn';
+    btn.innerHTML = '<span class="btn-icon">→</span> Let\'s get started';
+    btn.onclick = () => { surveyStep++; renderSurveyStep(); };
+    choices.appendChild(btn);
+
+  } else if (step.type === 'optin') {
+    const currentStatus = state.optins[step.optinId] || 'inactive';
+
+    // YES button
+    const yesBtn = document.createElement('button');
+    yesBtn.className = 'survey-btn yes-btn';
+    yesBtn.innerHTML = `<span class="btn-icon">✓</span> ${step.yesLabel || 'Yes — it\'s activated'}`;
+    yesBtn.onclick = () => {
+      state.optins[step.optinId] = 'active';
+      saveState(state);
+      surveyStep++;
+      renderSurveyStep();
+    };
+    choices.appendChild(yesBtn);
+
+    // NO button
+    const noBtn = document.createElement('button');
+    noBtn.className = 'survey-btn no-btn';
+    noBtn.innerHTML = `<span class="btn-icon">✗</span> ${step.noLabel || 'No — not yet'}`;
+    noBtn.onclick = () => {
+      if (step.noIsPassed) {
+        state.optins[step.optinId] = 'passed';
+        saveState(state);
+        surveyStep++;
+        renderSurveyStep();
+        return;
+      }
+      if (step.noInstruction === false) {
+        state.optins[step.optinId] = 'inactive';
+        saveState(state);
+        surveyStep++;
+        renderSurveyStep();
+        return;
+      }
+      // Show activation instructions
+      state.optins[step.optinId] = 'inactive';
+      saveState(state);
+      choices.innerHTML = '';
+      document.getElementById('surveyQ').textContent = 'Would you like to activate it now?';
+      document.getElementById('surveySub').textContent = 'Here\'s exactly how:';
+      document.getElementById('surveyInstructionText').textContent = step.instruction;
+      document.getElementById('surveyInstructionBox').classList.add('show');
+      document.getElementById('surveyConfirmBtns').classList.add('show');
+      surveyWaitingConfirm = true;
+    };
+    choices.appendChild(noBtn);
+
+    // PASS button (only for non-critical benefits)
+    if (step.optinId === 'dashpass' || step.optinId === 'ihg') {
+      const passBtn = document.createElement('button');
+      passBtn.className = 'survey-btn pass-btn';
+      passBtn.innerHTML = '<span class="btn-icon">—</span> Pass — not relevant to me';
+      passBtn.onclick = () => {
+        state.optins[step.optinId] = 'passed';
+        saveState(state);
+        surveyStep++;
+        renderSurveyStep();
+      };
+      choices.appendChild(passBtn);
+    }
+
+  } else if (step.type === 'done') {
+    const btn = document.createElement('button');
+    btn.className = 'survey-btn yes-btn';
+    btn.innerHTML = '<span class="btn-icon">✓</span> Go to my dashboard';
+    btn.onclick = closeSurvey;
+    choices.appendChild(btn);
+  }
+}
+
+function surveyConfirmDone() {
+  const step = surveySteps[surveyStep];
+  state.optins[step.optinId] = 'active';
+  saveState(state);
+  surveyStep++;
+  renderSurveyStep();
+}
+
+function surveyConfirmSkip() {
+  surveyStep++;
+  renderSurveyStep();
+}
+
+function surveyBack() {
+  if (surveyStep > 0) {
+    surveyStep--;
+    renderSurveyStep();
+  }
+}
+
 // ─── RENDER ALL ───────────────────────────────────────────────────────────────
 function renderAll() {
   renderOptins();
@@ -1549,6 +1928,18 @@ function renderAll() {
 }
 
 renderAll();
+
+// Launch survey on first visit (no setupDone flag)
+if (!state.setupDone) {
+  // Mark setup as done so it doesn't auto-launch again after first completion
+  const originalClose = closeSurvey;
+  window.closeSurvey = function() {
+    state.setupDone = true;
+    saveState(state);
+    originalClose();
+  };
+  openSurvey();
+}
 </script>
 </body>
 </html>
